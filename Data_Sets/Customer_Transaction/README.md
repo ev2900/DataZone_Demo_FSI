@@ -1,4 +1,3 @@
-
 # Customer Transaction Data Set
 
 ## Overview
