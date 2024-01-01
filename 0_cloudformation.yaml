@@ -4,3 +4,18 @@ Resources:
   
   S3Bucket:
     Type: AWS::S3::Bucket
+
+  Cloud9:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties:
+      Name: 'data-zone-cloud9'
+      Description: 'Cloud9 development enviorment'
+      ImageId: 'amazonlinux-2-x86_64'
+      InstanceType: 't2.large'
+      AutomaticStopTimeMinutes: '30'
+      Repositories: [
+        {
+          "PathComponent" : '/DataZone_Demo_FSI',
+          "RepositoryUrl" : 'https://github.com/ev2900/DataZone_Demo_FSI.git'
+        }
+      ]
