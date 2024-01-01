@@ -1,4 +1,3 @@
-
 # Fraud Detection and Analysis Data Set
 
 ## Overview
