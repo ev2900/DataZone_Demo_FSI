@@ -1,4 +1,3 @@
-
 # Financial Reporting and Analytics Data Set
 
 ## Overview
