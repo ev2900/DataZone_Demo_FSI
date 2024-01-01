@@ -1,4 +1,3 @@
-
 # Loan Application and Processing Data Set
 
 ## Overview
