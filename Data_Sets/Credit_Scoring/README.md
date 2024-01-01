@@ -1,4 +1,3 @@
-
 # Credit Scoring Data Set
 
 ## Overview
