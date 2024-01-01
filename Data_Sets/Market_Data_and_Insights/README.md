@@ -1,4 +1,3 @@
-
 # Market Data and Insights Data Set
 
 ## Overview
