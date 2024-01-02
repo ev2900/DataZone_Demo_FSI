@@ -230,7 +230,7 @@ Resources:
                   - 'arn:aws:glue:*:*:table/*redshift*/*'
                   - 'arn:aws:glue:*:*:catalog'
                   - 'arn:aws:glue:*:*:database/*redshift*'
-            - Effect: Allow
+              - Effect: Allow
                 Action: 
                   - 'secretsmanager:GetResourcePolicy'
                   - 'secretsmanager:GetSecretValue'
