@@ -107,3 +107,11 @@ Resources:
                   - 'arn:aws:ec2:*:*:network-interface/*'
                   - 'arn:aws:ec2:*:*:security-group/*'
                   - 'arn:aws:ec2:*:*:instance/*'
+
+Outputs:
+  S3BucketARN:
+    Description: S3 bucket ARN
+    Value: !GetAtt S3Bucket.Arn
+  IAMRoleARN:
+    Description: IAM role ARN
+    Value: !GetAtt GlueCrawlerIAMRole.Arn
