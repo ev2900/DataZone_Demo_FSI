@@ -317,21 +317,21 @@ Resources:
         - Key: Name
           Value: 'ecs security group'
   # add a self reference ingress rule 
-  ECSSecurityGroupIngress1:
+  SecurityGroupIngress1:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
       # Ingress rules
-      GroupId: !Ref ECSSecurityGroup
+      GroupId: !Ref SecurityGroup
       IpProtocol: -1
       FromPort: -1
       ToPort: -1
-      SourceSecurityGroupId: !GetAtt ECSSecurityGroup.GroupId
+      SourceSecurityGroupId: !GetAtt SecurityGroup.GroupId
   # allow all inbound traffic from public internet if PubliclyAccessible = Yes
-  ECSSecurityGroupIngress2:
+  SecurityGroupIngress2:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
       # Ingress rules
-      GroupId: !Ref ECSSecurityGroup
+      GroupId: !Ref SecurityGroup
       IpProtocol: -1
       FromPort: -1
       ToPort: -1
