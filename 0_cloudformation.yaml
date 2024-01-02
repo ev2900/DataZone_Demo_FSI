@@ -279,7 +279,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: ecs-subnet-1 | us-east-1a
+          Value: redshift-subnet-1 | us-east-1a
 
   Subnet2:
     Type: AWS::EC2::Subnet
@@ -289,7 +289,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: ecs-subnet-2 | us-east-1b
+          Value: redshift-subnet-2 | us-east-1b
 
   Subnet3:
     Type: AWS::EC2::Subnet
@@ -299,7 +299,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: ecs-subnet-2 | us-east-1c
+          Value: redshift-subnet-2 | us-east-1c
 
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
