@@ -237,7 +237,7 @@ Resources:
                   - 'secretsmanager:DescribeSecret'
                   - 'secretsmanager:ListSecretVersionIds'
                 Resource: 'arn:aws:secretsmanager:*:*:secret:*redshift*'
-             - Effect: Allow
+              - Effect: Allow
                 Action: 
                   - 'secretsmanager:GetRandomPassword'
                   - 'secretsmanager:ListSecrets'
