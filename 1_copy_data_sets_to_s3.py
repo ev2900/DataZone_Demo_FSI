@@ -1,4 +1,3 @@
-
 #
 # 0. Install / import boto3 and os libraries
 #
@@ -28,31 +27,18 @@ for stack in response['Stacks']:
                 s3_bucket_name = s3_bucket_arn.split(':')[-1]
 
 #
-# 2. Get the account id
+# 2. Upload the Sample Data to S3
 #
 
-stsc = boto3.client('sts')
+s3c = boto3.client('s3')
 
-caller_identity = stsc.get_caller_identity()
-account_id = caller_identity.get('Account')
-
-#
-# 3. Set DataLake Admin, Change defaulr IAM access control for new databases and tables
-# 
-
-lfc = boto3.client('lakeformation')
-
-data_lake_settings = {'DataLakeAdmins': [{'DataLakePrincipalIdentifier': 'arn:aws:iam::' + account_id + ':role/Admin'}], 'CreateDatabaseDefaultPermissions': [], 'CreateTableDefaultPermissions': []}
-
-lfc.put_data_lake_settings(DataLakeSettings = data_lake_settings)
-
-# 
-# 4. Register DataLake Location - Administration
-# 
-
-lfc = boto3.client('lakeformation')
-
-try:
-    lfc.register_resource(ResourceArn = s3_bucket_arn, UseServiceLinkedRole = True) # --no-hybrid-access-enabled ?
-except lfc.exceptions.AlreadyExistsException:
-    print('The s3 bucket ' + s3_bucket_arn + ' is already registered with LakeFormation')
+s3c.upload_file('./Data_Sets/Credit_Scoring/Credit_Scoring_Data_Sample.csv', s3_bucket_name, 'Credit_Scoring/Credit_Scoring_Data_Sample.csv')
+s3c.upload_file('./Data_Sets/Customer_Transaction/Customer_Transaction_Data_Sample.csv', s3_bucket_name, 'Customer_Transaction/Customer_Transaction_Data_Sample.csv')
+s3c.upload_file('./Data_Sets/Financial_Reporting_and_Analytics/Financial_Reporting_and_Analytics_Data_Sample.csv', s3_bucket_name, 'Financial_Reporting_and_Analytics/Financial_Reporting_and_Analytics_Data_Sample.csv')
+s3c.upload_file('./Data_Sets/Fraud_Detection_and_Analysis/Fraud_Detection_and_Analysis_Data_Sample.csv', s3_bucket_name, 'Fraud_Detection_and_Analysis/Fraud_Detection_and_Analysis_Data_Sample.csv')
+s3c.upload_file('./Data_Sets/Insurance_Policy/Insurance_Policy_Data_Sample.csv', s3_bucket_name, 'Insurance_Policy/Insurance_Policy_Data_Sample.csv')
+s3c.upload_file('./Data_Sets/Investment_Portfolio/Investment_Portfolio_Data_Sample.csv', s3_bucket_name, 'Investment_Portfolio/Investment_Portfolio_Data_Sample.csv')
+s3c.upload_file('./Data_Sets/Loan_Application_Processing/Loan_Application_Processing_Data_Sample.csv', s3_bucket_name, 'Loan_Application_Processing/Loan_Application_Processing_Data_Sample.csv')
+s3c.upload_file('./Data_Sets/Market_Data_and_Insights/Market_Data_and_Insights_Sample.csv', s3_bucket_name, 'Market_Data_and_Insights/Market_Data_and_Insights_Sample.csv')
+s3c.upload_file('./Data_Sets/Regulatory_Compliance/Regulatory_Compliance_Data_Sample.csv', s3_bucket_name, 'Regulatory_Compliance/Regulatory_Compliance_Data_Sample.csv')
+s3c.upload_file('./Data_Sets/Risk_Management/Risk_Management_Data_Sample.csv', s3_bucket_name, 'Risk_Management/Risk_Management_Data_Sample.csv')
