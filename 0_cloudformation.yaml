@@ -285,7 +285,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: '10.0.2.0/24'
-      AvailabilityZone: 'us-east-1a'
+      AvailabilityZone: 'us-east-1b'
       VpcId: !Ref VPC
       Tags:
         - Key: Name
@@ -295,7 +295,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: '10.0.3.0/24'
-      AvailabilityZone: 'us-east-1a'
+      AvailabilityZone: 'us-east-1c'
       VpcId: !Ref VPC
       Tags:
         - Key: Name
