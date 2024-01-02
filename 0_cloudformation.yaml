@@ -252,7 +252,7 @@ Resources:
       CidrBlock: '10.0.0.0/16'
       Tags:
         - Key: Name
-          Value: ecs-vpc
+          Value: redshift-vpc
       EnableDnsSupport: True
       EnableDnsHostnames: True
 
@@ -261,7 +261,7 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: ecs-internet-gateway
+          Value: redshift-internet-gateway
   # Attach InternetGateway to VPC
   AttachInternetGatewayVPC:
     Type: 'AWS::EC2::VPCGatewayAttachment'
