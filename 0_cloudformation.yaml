@@ -2,24 +2,103 @@ Description: FSI DataZone Demo
 
 Resources:
   
-  S3Bucket:
-    Type: AWS::S3::Bucket
-
-  Cloud9:
-    Type: AWS::Cloud9::EnvironmentEC2
+  #
+  # Networking (VPC, Internet Gateway, Subnets 1 - 3, Security Group)
+  #
+  VPC:
+    Type: AWS::EC2::VPC
     Properties:
-      Name: 'data-zone-cloud9'
-      Description: 'Cloud9 development enviorment'
-      ImageId: 'amazonlinux-2-x86_64'
-      InstanceType: 't2.large'
-      AutomaticStopTimeMinutes: '30'
-      Repositories: [
-        {
-          "PathComponent" : '/DataZone_Demo_FSI',
-          "RepositoryUrl" : 'https://github.com/ev2900/DataZone_Demo_FSI.git'
-        }
-      ]
+      CidrBlock: '10.0.0.0/16'
+      Tags:
+        - Key: Name
+          Value: redshift-vpc
+      EnableDnsSupport: True
+      EnableDnsHostnames: True
 
+  VPCInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: redshift-internet-gateway
+  # Attach InternetGateway to VPC
+  AttachInternetGatewayVPC:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: 
+        Ref: VPCInternetGateway
+      VpcId:
+        Ref: VPC
+        
+  Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: '10.0.1.0/24'
+      AvailabilityZone: 'us-east-1a'
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: redshift-subnet-1 | us-east-1a
+
+  Subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: '10.0.2.0/24'
+      AvailabilityZone: 'us-east-1b'
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: redshift-subnet-2 | us-east-1b
+
+  Subnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: '10.0.3.0/24'
+      AvailabilityZone: 'us-east-1c'
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: redshift-subnet-2 | us-east-1c
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: 'security group'
+      GroupDescription: 'security group'
+      VpcId: !Ref VPC
+      # Egress rules
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1 
+          ToPort: -1
+          CidrIp: '0.0.0.0/0'
+      Tags:
+        - Key: Name
+          Value: 'ecs security group'
+  # add a self reference ingress rule 
+  SecurityGroupIngress1:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      # Ingress rules
+      GroupId: !Ref SecurityGroup
+      IpProtocol: -1
+      FromPort: -1
+      ToPort: -1
+      SourceSecurityGroupId: !GetAtt SecurityGroup.GroupId
+  # allow all inbound traffic from public internet if PubliclyAccessible = Yes
+  SecurityGroupIngress2:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      # Ingress rules
+      GroupId: !Ref SecurityGroup
+      IpProtocol: -1
+      FromPort: -1
+      ToPort: -1
+      CidrIp: '0.0.0.0/0'
+
+  #
+  # IAM Roles (Glue Crawler, Redshift Serverless)
+  #
   GlueCrawlerIAMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -245,107 +324,150 @@ Resources:
               - Effect: Allow
                 Action: 'iam:PassRole'
                 Resource: 'arn:aws:iam::*:role/*'
- 
-  VPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: '10.0.0.0/16'
-      Tags:
-        - Key: Name
-          Value: redshift-vpc
-      EnableDnsSupport: True
-      EnableDnsHostnames: True
 
-  VPCInternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Name
-          Value: redshift-internet-gateway
-  # Attach InternetGateway to VPC
-  AttachInternetGatewayVPC:
-    Type: 'AWS::EC2::VPCGatewayAttachment'
-    Properties:
-      InternetGatewayId: 
-        Ref: VPCInternetGateway
-      VpcId:
-        Ref: VPC
-        
-  Subnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      CidrBlock: '10.0.1.0/24'
-      AvailabilityZone: 'us-east-1a'
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: redshift-subnet-1 | us-east-1a
+  #
+  # Redshift
+  #
 
-  Subnet2:
-    Type: AWS::EC2::Subnet
+  # Ivestment Protfolio
+  InvestmentProtfolioRedshiftNamespace:
+    Type: AWS::RedshiftServerless::Namespace
     Properties:
-      CidrBlock: '10.0.2.0/24'
-      AvailabilityZone: 'us-east-1b'
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: redshift-subnet-2 | us-east-1b
+      AdminUsername: admin
+      AdminUserPassword: 'Pa$word1'
+      IamRoles: 
+        - !GetAtt RedshiftServerlessIAMRole.Arn
+      NamespaceName: investment-portfolio
 
-  Subnet3:
-    Type: AWS::EC2::Subnet
+  InvestmentProtfolioRedshiftWorkgroup:
+    Type: AWS::RedshiftServerless::Workgroup
     Properties:
-      CidrBlock: '10.0.3.0/24'
-      AvailabilityZone: 'us-east-1c'
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: redshift-subnet-2 | us-east-1c
+      BaseCapacity: 8
+      NamespaceName: investment-portfolio
+      SecurityGroupIds: 
+        - !Ref SecurityGroup
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+      WorkgroupName: investment-portfolio
 
-  SecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+  # Loan_Application_Processing
+  LoanApplicationProcessingRedshiftNamespace:
+    Type: AWS::RedshiftServerless::Namespace
     Properties:
-      GroupName: 'security group'
-      GroupDescription: 'security group'
-      VpcId: !Ref VPC
-      # Egress rules
-      SecurityGroupEgress:
-        - IpProtocol: -1
-          FromPort: -1 
-          ToPort: -1
-          CidrIp: '0.0.0.0/0'
-      Tags:
-        - Key: Name
-          Value: 'ecs security group'
-  # add a self reference ingress rule 
-  SecurityGroupIngress1:
-    Type: 'AWS::EC2::SecurityGroupIngress'
-    Properties:
-      # Ingress rules
-      GroupId: !Ref SecurityGroup
-      IpProtocol: -1
-      FromPort: -1
-      ToPort: -1
-      SourceSecurityGroupId: !GetAtt SecurityGroup.GroupId
-  # allow all inbound traffic from public internet if PubliclyAccessible = Yes
-  SecurityGroupIngress2:
-    Type: 'AWS::EC2::SecurityGroupIngress'
-    Properties:
-      # Ingress rules
-      GroupId: !Ref SecurityGroup
-      IpProtocol: -1
-      FromPort: -1
-      ToPort: -1
-      CidrIp: '0.0.0.0/0'
+      AdminUsername: admin
+      AdminUserPassword: 'Pa$word1'
+      IamRoles: 
+        - !GetAtt RedshiftServerlessIAMRole.Arn
+      NamespaceName: loan-application-processing
 
-Type: AWS::RedshiftServerless::Namespace
-Properties:
-  AdminUsername: admin
-  AdminUserPassword: 'Pa$word1'
-  IamRoles: 
-    - !Ref RedshiftServerlessIAMRole
-  KmsKeyId: String
-  NamespaceName: investment-portfolio
-      
+  LoanApplicationProcessingWorkgroup:
+    Type: AWS::RedshiftServerless::Workgroup
+    Properties:
+      BaseCapacity: 8
+      NamespaceName: loan-application-processing
+      SecurityGroupIds: 
+        - !Ref SecurityGroup
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+      WorkgroupName: loan-application-processing
+
+  # Market_Data_and_Insights
+  MarketDataInsightsRedshiftNamespace:
+    Type: AWS::RedshiftServerless::Namespace
+    Properties:
+      AdminUsername: admin
+      AdminUserPassword: 'Pa$word1'
+      IamRoles: 
+        - !GetAtt RedshiftServerlessIAMRole.Arn
+      NamespaceName: market-data-insights
+
+  MarketDataInsightsRedshiftWorkgroup:
+    Type: AWS::RedshiftServerless::Workgroup
+    Properties:
+      BaseCapacity: 8
+      NamespaceName: market-data-insights
+      SecurityGroupIds: 
+        - !Ref SecurityGroup
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+      WorkgroupName: market-data-insights
+
+  # Regulatory_Compliance
+  RegulatoryComplianceRedshiftNamespace:
+    Type: AWS::RedshiftServerless::Namespace
+    Properties:
+      AdminUsername: admin
+      AdminUserPassword: 'Pa$word1'
+      IamRoles: 
+        - !GetAtt RedshiftServerlessIAMRole.Arn
+      NamespaceName: regulatory-compliance
+
+  RegulatoryComplianceRedshiftWorkgroup:
+    Type: AWS::RedshiftServerless::Workgroup
+    Properties:
+      BaseCapacity: 8
+      NamespaceName: regulatory-compliance
+      SecurityGroupIds: 
+        - !Ref SecurityGroup
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+      WorkgroupName: regulatory-compliance
+
+  # Risk_Management
+  RiskManagementRedshiftNamespace:
+    Type: AWS::RedshiftServerless::Namespace
+    Properties:
+      AdminUsername: admin
+      AdminUserPassword: 'Pa$word1'
+      IamRoles: 
+        - !GetAtt RedshiftServerlessIAMRole.Arn
+      NamespaceName: risk-management
+
+  InvestmentProtfolioRedshiftWorkgroup:
+    Type: AWS::RedshiftServerless::Workgroup
+    Properties:
+      BaseCapacity: 8
+      NamespaceName: risk-management
+      SecurityGroupIds: 
+        - !Ref SecurityGroup
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+      WorkgroupName: risk-management
+
+  #
+  # S3 Bucket
+  #
+  S3Bucket:
+    Type: AWS::S3::Bucket
+
+  #
+  # Cloud 9
+  #
+  Cloud9:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties:
+      Name: 'data-zone-cloud9'
+      Description: 'Cloud9 development enviorment'
+      ImageId: 'amazonlinux-2-x86_64'
+      InstanceType: 't2.large'
+      AutomaticStopTimeMinutes: '30'
+      Repositories: [
+        {
+          "PathComponent" : '/DataZone_Demo_FSI',
+          "RepositoryUrl" : 'https://github.com/ev2900/DataZone_Demo_FSI.git'
+        }
+      ]
+
 Outputs:
   S3BucketARN:
     Description: S3 bucket ARN
