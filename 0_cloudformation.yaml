@@ -96,6 +96,40 @@ Resources:
       ToPort: -1
       CidrIp: '0.0.0.0/0'
 
+  VPCRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties: 
+      Tags: 
+        - Key: Name
+          Value: redshift-route-table
+      VpcId: !Ref VPC
+  # add a route to the internet gateway
+  InternetGatewayRoute:
+    Type: AWS::EC2::Route
+    Properties: 
+      RouteTableId: !Ref VPCRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref VPCInternetGateway
+
+  # associate route table with subnets (Subnet1, Sub)
+  Subnet1Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref VPCRouteTable
+      SubnetId: !Ref Subnet1
+      
+  Subnet2Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref VPCRouteTable
+      SubnetId: !Ref Subnet2
+
+  Subnet3Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties: 
+      RouteTableId: !Ref VPCRouteTable
+      SubnetId: !Ref Subnet3
+
   #
   # IAM Roles (Glue Crawler, Redshift Serverless)
   #
