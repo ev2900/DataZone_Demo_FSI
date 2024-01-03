@@ -336,6 +336,15 @@ Resources:
       FromPort: -1
       ToPort: -1
       CidrIp: '0.0.0.0/0'
+
+Type: AWS::RedshiftServerless::Namespace
+Properties:
+  AdminUsername: admin
+  AdminUserPassword: 'Pa$word1'
+  IamRoles: 
+    - !Ref RedshiftServerlessIAMRole
+  KmsKeyId: String
+  NamespaceName: investment-portfolio
       
 Outputs:
   S3BucketARN:
