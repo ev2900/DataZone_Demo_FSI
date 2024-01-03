@@ -338,7 +338,6 @@ Resources:
       IamRoles: 
         - !GetAtt RedshiftServerlessIAMRole.Arn
       NamespaceName: investment-portfolio
-
   InvestmentProtfolioRedshiftWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
     Properties:
@@ -351,6 +350,7 @@ Resources:
         - !Ref Subnet2
         - !Ref Subnet3
       WorkgroupName: investment-portfolio
+      PubliclyAccessible: True
 
   # Loan_Application_Processing
   LoanApplicationProcessingRedshiftNamespace:
@@ -361,7 +361,6 @@ Resources:
       IamRoles: 
         - !GetAtt RedshiftServerlessIAMRole.Arn
       NamespaceName: loan-application-processing
-
   LoanApplicationProcessingWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
     Properties:
@@ -374,6 +373,7 @@ Resources:
         - !Ref Subnet2
         - !Ref Subnet3
       WorkgroupName: loan-application-processing
+      PubliclyAccessible: True
 
   # Market_Data_and_Insights
   MarketDataInsightsRedshiftNamespace:
@@ -384,7 +384,6 @@ Resources:
       IamRoles: 
         - !GetAtt RedshiftServerlessIAMRole.Arn
       NamespaceName: market-data-insights
-
   MarketDataInsightsRedshiftWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
     Properties:
@@ -397,6 +396,7 @@ Resources:
         - !Ref Subnet2
         - !Ref Subnet3
       WorkgroupName: market-data-insights
+      PubliclyAccessible: True
 
   # Regulatory_Compliance
   RegulatoryComplianceRedshiftNamespace:
@@ -407,7 +407,6 @@ Resources:
       IamRoles: 
         - !GetAtt RedshiftServerlessIAMRole.Arn
       NamespaceName: regulatory-compliance
-
   RegulatoryComplianceRedshiftWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
     Properties:
@@ -420,6 +419,7 @@ Resources:
         - !Ref Subnet2
         - !Ref Subnet3
       WorkgroupName: regulatory-compliance
+      PubliclyAccessible: True
 
   # Risk_Management
   RiskManagementRedshiftNamespace:
@@ -430,7 +430,6 @@ Resources:
       IamRoles: 
         - !GetAtt RedshiftServerlessIAMRole.Arn
       NamespaceName: risk-management
-
   InvestmentProtfolioRedshiftWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
     Properties:
@@ -443,6 +442,7 @@ Resources:
         - !Ref Subnet2
         - !Ref Subnet3
       WorkgroupName: risk-management
+      PubliclyAccessible: True
 
   #
   # S3 Bucket
