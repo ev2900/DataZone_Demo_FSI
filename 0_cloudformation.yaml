@@ -519,16 +519,16 @@ Outputs:
 
   InvestmentProtfolioRedshiftARN:
     Description: ARN of the investment-protfolio Redshift workgroup
-    Value: !GetAtt InvestmentProtfolioRedshiftWorkgroup.Arn
+    Value: !GetAtt InvestmentProtfolioRedshiftWorkgroup.WorkgroupArn
 
   LoanApplicationProcessingRedshiftARN:
     Description: ARN of the loan-application-processing Redshift workgroup
-    Value: !GetAtt LoanApplicationProcessingWorkgroup.Arn
+    Value: !GetAtt LoanApplicationProcessingWorkgroup.WorkgroupArn
 
   MarketDataInsightsRedshiftARN:
     Description: ARN of the market-data-insights Redshift workgroup
-    Value: !GetAtt MarketDataInsightsRedshiftWorkgroup.Arn
+    Value: !GetAtt MarketDataInsightsRedshiftWorkgroup.WorkgroupArn
 
   RegulatoryComplianceRedshiftARN:
     Description: ARN of the regulatory-compliance Redshift workgroup
-    Value: !GetAtt RegulatoryComplianceRedshiftNamespace.Arn
+    Value: !GetAtt RegulatoryComplianceRedshiftNamespace.WorkgroupArn
