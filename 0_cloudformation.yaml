@@ -460,28 +460,28 @@ Resources:
       PubliclyAccessible: True
 
   # Risk_Management
-#  RiskManagementRedshiftNamespace:
-#    Type: AWS::RedshiftServerless::Namespace
-#    Properties:
-#      AdminUsername: admin
-#      AdminUserPassword: 'Pa$word1'
-#      IamRoles: 
-#        - !GetAtt RedshiftServerlessIAMRole.Arn
-#      NamespaceName: risk-management
-#  InvestmentProtfolioRedshiftWorkgroup:
-#    Type: AWS::RedshiftServerless::Workgroup
-#    Properties:
-#      BaseCapacity: 8
-#      NamespaceName: 
-#        !Ref RiskManagementRedshiftNamespace
-#      SecurityGroupIds: 
-#        - !Ref SecurityGroup
-#      SubnetIds: 
-#        - !Ref Subnet1
-#        - !Ref Subnet2
-#        - !Ref Subnet3
-#      WorkgroupName: risk-management
-#      PubliclyAccessible: True
+  RiskManagementRedshiftNamespace:
+    Type: AWS::RedshiftServerless::Namespace
+    Properties:
+      AdminUsername: admin
+      AdminUserPassword: 'Pa$word1'
+      IamRoles: 
+        - !GetAtt RedshiftServerlessIAMRole.Arn
+      NamespaceName: risk-management
+  RiskManagementRedshiftWorkgroup:
+    Type: AWS::RedshiftServerless::Workgroup
+    Properties:
+      BaseCapacity: 8
+      NamespaceName: 
+        !Ref RiskManagementRedshiftNamespace
+      SecurityGroupIds: 
+        - !Ref SecurityGroup
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+      WorkgroupName: risk-management
+      PubliclyAccessible: True
 
   #
   # S3 Bucket
@@ -516,19 +516,3 @@ Outputs:
   IAMRoleARN:
     Description: IAM role ARN
     Value: !GetAtt GlueCrawlerIAMRole.Arn
-
-  InvestmentProtfolioRedshiftARN:
-    Description: ARN of the investment-protfolio Redshift workgroup
-    Value: !GetAtt InvestmentProtfolioRedshiftWorkgroup.WorkgroupArn
-
-  LoanApplicationProcessingRedshiftARN:
-    Description: ARN of the loan-application-processing Redshift workgroup
-    Value: !GetAtt LoanApplicationProcessingWorkgroup.WorkgroupArn
-
-  MarketDataInsightsRedshiftARN:
-    Description: ARN of the market-data-insights Redshift workgroup
-    Value: !GetAtt MarketDataInsightsRedshiftWorkgroup.WorkgroupArn
-
-  RegulatoryComplianceRedshiftARN:
-    Description: ARN of the regulatory-compliance Redshift workgroup
-    Value: !GetAtt RegulatoryComplianceRedshiftNamespace.WorkgroupArn
