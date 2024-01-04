@@ -19,7 +19,7 @@ response = cfn.describe_stacks(StackName=stack_name)
 for stack in response['Stacks']:
     if stack["StackName"] == stack_name:
         for output in stack["Outputs"]:
-            if output["OutputKey"] == "IAMRoleARN":
+            if output["OutputKey"] == "IAMRoleARNGlue":
                 IAMRoleARN = output["OutputValue"]
                 
             elif output["OutputKey"] == "S3BucketARN":
