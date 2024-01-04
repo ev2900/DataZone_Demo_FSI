@@ -513,10 +513,10 @@ Outputs:
     Description: S3 bucket ARN
     Value: !GetAtt S3Bucket.Arn
 
-  IAMRoleARN_Glue:
+  IAMRoleARNGlue:
     Description: IAM role ARN Glue
     Value: !GetAtt GlueCrawlerIAMRole.Arn
 
-  IAMRoleARN_Redshift:
+  IAMRoleARNRedshift:
     Description: IAM role ARN Redshift
     Value: !GetAtt RedshiftServerlessIAMRole.Arn
