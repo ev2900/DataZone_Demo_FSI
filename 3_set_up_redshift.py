@@ -1,5 +1,6 @@
 import psycopg2 # pip install psycopg2-binary
 
+# Define function to run a SQL query on Redshift
 def run_sql(host, query):
     
     # Connect to Redshift
@@ -110,6 +111,25 @@ run_sql(investment_portfolio_host, query)
 
 ## Load Tables
 
+# Get IAM role from CloudFormation outputs
+import boto3
+
+cfn = boto3.client('cloudformation')
+
+# Set the name of the CloudFormation stack
+stack_name = 'c-0-loudformation'
+response = cfn.describe_stacks(StackName=stack_name)
+
+for stack in response['Stacks']:
+    if stack["StackName"] == stack_name:
+        for output in stack["Outputs"]:
+            if output["OutputKey"] == "IAMRoleARNRedshift":
+                IAMRoleARN = output["OutputValue"]
+            elif output["OutputKey"] == "S3BucketARN":
+                s3_bucket_arn = output["OutputValue"]
+                s3_bucket_name = s3_bucket_arn.split(':')[-1]
+
+# Define function to load Redshift tables
 def load_table(host, s3_bucket_path, table_name):
     
     # Connect to Redshift
@@ -124,7 +144,7 @@ def load_table(host, s3_bucket_path, table_name):
     # Execute query
     cur = conn.cursor()
 
-    query = "COPY " + table_name + "FROM " + s3_bucket_path + "IAM_ROLE " + ____ + "CSV IGNOREHEADER 1 DELIMITER ','"
+    query = "COPY " + table_name + " FROM " + "'s3://" + s3_bucket_name + s3_bucket_path + "' IAM_ROLE '" + IAMRoleARN + "' CSV IGNOREHEADER 1 DELIMITER ','"
 
     cur.execute(query)
 
@@ -133,4 +153,16 @@ def load_table(host, s3_bucket_path, table_name):
     conn.close()
 
 # loan-application-processing
-load_table(loan_application_processing_host, ,'loan_application_processing')
+load_table(loan_application_processing_host, '/Loan_Application_Processing/Loan_Application_Processing_Data_Sample.csv', 'loan_application_processing')
+
+# regulatory-compliance
+load_table(regulator_compliance_host, '/Regulatory_Compliance/Regulatory_Compliance_Data_Sample.csv', 'regulatory_compliance')
+
+# market-data-insights
+load_table(market_data_insights_host, '/Market_Data_and_Insights/Market_Data_and_Insights_Sample.csv', 'market_data_insights')
+
+# risk-management
+load_table(risk_management_host, '/Risk_Management/Risk_Management_Data_Sample.csv', 'risk_management')
+
+# investment-portfolio
+load_table(investment_portfolio_host, '/Investment_Portfolio/Investment_Portfolio_Data_Sample.csv', 'investment_portfolio')
