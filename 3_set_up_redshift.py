@@ -26,11 +26,11 @@ def run_sql(host, query):
     conn.close()
 
 # hosts
-loan_application_processing_host = ''
-regulator_compliance_host = ''
-market_data_insights_host = ''
-risk_management_host = ''
-investment_portfolio_host = ''
+loan_application_processing_host = '<redshift-workgroup-endpoint>'
+regulator_compliance_host = '<redshift-workgroup-endpoint>'
+market_data_insights_host = '<redshift-workgroup-endpoint>'
+risk_management_host = '<redshift-workgroup-endpoint>'
+investment_portfolio_host = '<redshift-workgroup-endpoint>'
 
 ## Create Tables
 
