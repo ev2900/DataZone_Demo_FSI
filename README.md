@@ -26,6 +26,6 @@ The demo data sets used are in the [Data_Sets](https://github.com/ev2900/DataZon
 * Provide a name for the domain
 * Select the check mark next to the *Set-up this account for data consumption and publishing* under the Quick setup section
 
-<img width="500" alt="quick_setup" src="https://github.com/ev2900/DataZone_Demo/blob/main/README/quick_setup_button.png">
+<img width="500" alt="quick_setup" src="https://github.com/ev2900/DataZone_Demo_FSI/blob/main/README/quick_setup_button.png">
 
 * Click on **Create domain**
