@@ -3,7 +3,7 @@
 #
 
 import os
-import boto3 # pip install boto3
+import boto3
 
 #
 # 1. Get CloudFormation output
