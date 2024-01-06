@@ -1,5 +1,7 @@
 # DataZone Demo with Financial Services Specific Data
 
+<img width="275" alt="map-user" src="https://img.shields.io/badge/cloudformation template deployments-00-blue"> <img width="85" alt="map-user" src="https://img.shields.io/badge/views-000-green"> <img width="125" alt="map-user" src="https://img.shields.io/badge/unique visits-000-green">
+
 This repository provides an easy way to deply and set up an environment for demo'ing Amazon DataZone with data sets specific to the financial services industry.
 
 The demo data sets used are in the [Data_Sets](https://github.com/ev2900/DataZone_Demo_FSI/tree/main/Data_Sets) folder. Each data set has a CSV file with 100 sample rows of data and a README describing the dataset. All of the data in each data set is fictonal data created for the purposes of demonstrating DataZone.
