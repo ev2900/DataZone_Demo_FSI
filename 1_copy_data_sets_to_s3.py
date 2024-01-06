@@ -12,7 +12,7 @@ import boto3 # pip install boto3
 cfn = boto3.client('cloudformation')
 
 # Set the name of the CloudFormation stack
-stack_name = 'data_zone_fsi'
+stack_name = 'data-zone-fsi'
 
 response = cfn.describe_stacks(StackName=stack_name)
 
