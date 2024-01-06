@@ -20,7 +20,7 @@ account_id = caller_identity.get('Account')
 # 2. via. the AWS protal create a DataZone domain. Click the quick set up box
 #
 
-datazone_domain_id = 'dzd_ajau7r61dv4jaf'
+datazone_domain_id = '<domain-id>'
 
 #
 # 3. Create DataZone projects
@@ -114,10 +114,10 @@ create_environment_data_lake('Insurance Policy', 'Insurance Policy')
 smc = boto3.client('secretsmanager')
 
 # Define the secret detail
-def create_redshift_secret(secret_name):
+def create_redshift_secret(secret_name, project_name):
     try:
         response = smc.create_secret(
-            Name = 'redshift-login',
+            Name = secret_name,
             SecretString = '{"username":"admin","password":"Pa$word1"}',
             Tags = [
                 {
@@ -126,7 +126,7 @@ def create_redshift_secret(secret_name):
                 },
                 {
                     'Key': 'AmazonDataZoneProject',
-                    'Value': project_dict['Credit Scoring']
+                    'Value': project_dict[project_name]
                 }
             ]
         )
@@ -139,18 +139,18 @@ def create_redshift_secret(secret_name):
     except ClientError as e:
         print(e)
         
-        response = smc.describe_secret(SecretId = 'redshift-login')
+        response = smc.describe_secret(SecretId = secret_name)
         redshift_login_secret_arn = response['ARN']
         
         return redshift_login_secret_arn
 
-investment_portfolio_redshift_secret_arn = create_redshift_secret('investment_portfolio_redshift_secret')
-loan_application_processing_redshift_secret_arn = create_redshift_secret('loan_application_processing_redshift_secret')
-market_data_and_insights_redshift_secret_arn = create_redshift_secret('market_data_and_insights_redshift_secret')
-regulatory_compliance_redshift_secret_arn = create_redshift_secret('regulatory_compliance_redshift_secret')
-risk_management_redshift_secret_arn = create_redshift_secret('risk_management_redshift_secret')
+investment_portfolio_redshift_secret_arn = create_redshift_secret('investment_portfolio_redshift_secret', 'Investment Portfolio')
+loan_application_processing_redshift_secret_arn = create_redshift_secret('loan_application_processing_redshift_secret', 'Loan Application Processing')
+market_data_and_insights_redshift_secret_arn = create_redshift_secret('market_data_and_insights_redshift_secret', 'Market Data and Insights')
+regulatory_compliance_redshift_secret_arn = create_redshift_secret('regulatory_compliance_redshift_secret', 'Regulatory Compliance')
+risk_management_redshift_secret_arn = create_redshift_secret('risk_management_redshift_secret', 'Risk Management')
 
-def create_environment_redshift(env_name, project_name, workgroup_name):
+def create_environment_redshift(env_name, project_name, workgroup_name, redshift_login_secret_arn):
     try:
         r = dzc.create_environment(
             domainIdentifier = datazone_domain_id,
@@ -163,19 +163,19 @@ def create_environment_redshift(env_name, project_name, workgroup_name):
         print(e)
 
 # Investment Portfolio - Redshift
-create_environment_redshift('Investment Portfolio', 'Investment Portfolio', 'investment-portfolio')
+create_environment_redshift('Investment Portfolio', 'Investment Portfolio', 'investment-portfolio', investment_portfolio_redshift_secret_arn)
 
 # Loan Application Processing - Redshift
-create_environment_redshift('Loan Application Processing', 'Loan Application Processing', 'loan-application-processing')
+create_environment_redshift('Loan Application Processing', 'Loan Application Processing', 'loan-application-processing', loan_application_processing_redshift_secret_arn)
 
 # Market Data and Insights - Redshift
-create_environment_redshift('Market Data and Insights', 'Market Data and Insights', 'market-data-insights')
+create_environment_redshift('Market Data and Insights', 'Market Data and Insights', 'market-data-insights', market_data_and_insights_redshift_secret_arn)
 
 # Regulatory Compliance - Redshift
-create_environment_redshift('Regulatory Compliance', 'Regulatory Compliance', 'regulatory-compliance')
+create_environment_redshift('Regulatory Compliance', 'Regulatory Compliance', 'regulatory-compliance', regulatory_compliance_redshift_secret_arn)
 
 # Risk Management - Redshift
-create_environment_redshift('Risk Management', 'Risk Management', 'risk-management')
+create_environment_redshift('Risk Management', 'Risk Management', 'risk-management', risk_management_redshift_secret_arn)
 
 #
 # 5. Create a data source for each project
@@ -286,7 +286,7 @@ def create_data_source_redshift(data_source_name, project_name, redshift_serverl
             
     except Exception as e:
         print(e)
-    
+
 # Investment Portfolio
 create_data_source_redshift('Investment Portfolio Redshift', 'Investment Portfolio', 'investment-portfolio', investment_portfolio_redshift_secret_arn)
 
