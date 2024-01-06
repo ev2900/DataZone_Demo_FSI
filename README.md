@@ -12,4 +12,8 @@ The demo data sets used are in the [Data_Sets](https://github.com/ev2900/DataZon
 
 2. Run the following from the terminal of the [Cloud9](https://us-east-1.console.aws.amazon.com/cloud9control/home) environment that was deployed by the CloudFormation stack
 
+```pip install -r DataZone_Demo_FSI/requirements.txt```
 
+```python DataZone_Demo_FSI/1_copy_data_sets_to_s3.py```
+
+```python DataZone_Demo_FSI/2_set_up_glue_data_catalog.py```
