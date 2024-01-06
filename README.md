@@ -42,4 +42,4 @@ Once you update the variables with the domain id **save the file**
 
 ```python DataZone_Demo_FSI/4_set_up_datazone.py```
 
-**Note** *run the 4_set_up_datazone.py script twice*
+**Note** *run the 4_set_up_datazone.py script twice. Not all resources will successfully deploy on the first run*
