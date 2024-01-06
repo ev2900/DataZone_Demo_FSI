@@ -1,4 +1,5 @@
-import psycopg2 # pip install psycopg2-binary
+import psycopg2
+import boto3
 
 # Define function to run a SQL query on Redshift
 def run_sql(host, query):
@@ -25,12 +26,19 @@ def run_sql(host, query):
     cur.close()
     conn.close()
 
+# Define a function to get the endpoint of a Redshift serverless instance
+rssc = boto3.client('redshift-serverless')
+
+def get_redshift_serverless_endpoint(workgroup_name):
+    r = rssc.get_workgroup(workgroupName = workgroup_name)
+    return r['workgroup']['endpoint']
+
 # hosts
-loan_application_processing_host = '<redshift-workgroup-endpoint>'
-regulator_compliance_host = '<redshift-workgroup-endpoint>'
-market_data_insights_host = '<redshift-workgroup-endpoint>'
-risk_management_host = '<redshift-workgroup-endpoint>'
-investment_portfolio_host = '<redshift-workgroup-endpoint>'
+loan_application_processing_host = get_redshift_serverless_endpoint('loan-application-processing')
+regulator_compliance_host = get_redshift_serverless_endpoint('regulatory-compliance')
+market_data_insights_host = get_redshift_serverless_endpoint('market-data-insights')
+risk_management_host = get_redshift_serverless_endpoint('risk-management')
+investment_portfolio_host = get_redshift_serverless_endpoint('investment-portfolio')
 
 ## Create Tables
 
