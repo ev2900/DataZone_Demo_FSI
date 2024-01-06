@@ -20,3 +20,12 @@ The demo data sets used are in the [Data_Sets](https://github.com/ev2900/DataZon
 
 ```python DataZone_Demo_FSI/3_set_up_redshift.py```
 
+3. Deploy a DataZone domain from the AWS console
+
+* Navigate to the [DataZone](https://us-east-1.console.aws.amazon.com/datazone/home) home page and click on **Create domain**
+* Provide a name for the domain
+* Select the check mark next to the *Set-up this account for data consumption and publishing* under the Quick setup section
+
+<img width="500" alt="quick_setup" src="https://github.com/ev2900/DataZone_Demo/blob/main/README/quick_setup_button.png">
+
+* Click on **Create domain**
