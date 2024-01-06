@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg2 # pip install psycopg2-binary
 import boto3
 
 # Define function to run a SQL query on Redshift
@@ -31,7 +31,7 @@ rssc = boto3.client('redshift-serverless')
 
 def get_redshift_serverless_endpoint(workgroup_name):
     r = rssc.get_workgroup(workgroupName = workgroup_name)
-    return r['workgroup']['endpoint']
+    return r['workgroup']['endpoint']['address']
 
 # hosts
 loan_application_processing_host = get_redshift_serverless_endpoint('loan-application-processing')
