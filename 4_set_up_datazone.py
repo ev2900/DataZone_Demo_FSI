@@ -5,6 +5,7 @@
 import os
 import boto3 # pip install boto3
 import time
+from botocore.exceptions import ClientError
 
 #
 # 1. Get the account id
@@ -19,7 +20,7 @@ account_id = caller_identity.get('Account')
 # 2. via. the AWS protal create a DataZone domain. Click the quick set up box
 #
 
-datazone_domain_id = '<domain_id>'
+datazone_domain_id = 'dzd_44l3dtago8pxuv'
 
 #
 # 3. Create DataZone projects
@@ -33,7 +34,6 @@ def create_project(project_name):
             domainIdentifier = datazone_domain_id,
             name = project_name
         )
-    
     except Exception as e:
         print(e)
 
@@ -84,9 +84,12 @@ def create_environment_data_lake(env_name, project_name):
             name = env_name,
             projectIdentifier = project_dict[project_name]
         )
-    
     except Exception as e:
         print(e)
+
+#
+# Data Lake Enviorments
+#
     
 # Credit Scoring - Glue
 create_environment_data_lake('Credit Scoring', 'Credit Scoring')
@@ -103,12 +106,52 @@ create_environment_data_lake('Fraud Detection and Analysis', 'Fraud Detection an
 # Insurance Policy - Glue
 create_environment_data_lake('Insurance Policy', 'Insurance Policy')
 
+#
+# Redshift Enviorments
+#
+
+# Create a secret manager secret with the Redshift login(s)
+smc = boto3.client('secretsmanager')
+
+# Define the secret details
+try:
+    response = smc.create_secret(
+        Name = 'redshift-login',
+        SecretString = '{"username":"admin","password":"Pa$word1"}'
+    )
+    
+    redshift_login_secret_arn = response['ARN']
+    print('Secret created: ' + redshift_login_secret_arn)
+    
+except ClientError as e:
+    print(e)
+    
+    response = smc.describe_secret(SecretId = 'redshift-login')
+    redshift_login_secret_arn = response['ARN']
+
+def create_environment_redshift(env_name, project_name, workgroup_name):
+    try:
+        r = dzc.create_environment(
+            domainIdentifier = datazone_domain_id,
+            environmentProfileIdentifier = enviorment_profile_dict['DataWarehouseProfile'],
+            name = env_name,
+            projectIdentifier = project_dict[project_name],
+            userParameters = [{'name': 'dataAccessSecretsArn', 'value': redshift_login_secret_arn}, {'name': 'dbName', 'value': 'dev'}, {'name': 'workgroupName', 'value': workgroup_name}]
+        )
+    except Exception as e:
+        print(e)
+
 # Investment Portfolio - Redshift
+create_environment_redshift('Investment Portfolio', 'Investment Portfolio', 'investment-portfolio')
 
 # Loan Application Processing - Redshift
+create_environment_redshift('Loan Application Processing', 'Loan Application Processing', 'loan-application-processing')
 
 # Market Data and Insights - Redshift
+create_environment_redshift('Market Data and Insights', 'Market Data and Insights', 'market-data-insights')
 
 # Regulatory Compliance - Redshift
+create_environment_redshift('Regulatory Compliance', 'Regulatory Compliance', 'regulatory-compliance')
 
 # Risk Management - Redshift
+create_environment_redshift('Risk Management', 'Risk Management', 'risk-management')
