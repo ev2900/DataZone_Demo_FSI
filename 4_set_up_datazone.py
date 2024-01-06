@@ -20,7 +20,7 @@ account_id = caller_identity.get('Account')
 # 2. via. the AWS protal create a DataZone domain. Click the quick set up box
 #
 
-datazone_domain_id = '<datazone-domain-id>'
+datazone_domain_id = '<domain-id>'
 
 #
 # 3. Create DataZone projects
@@ -117,7 +117,53 @@ smc = boto3.client('secretsmanager')
 try:
     response = smc.create_secret(
         Name = 'redshift-login',
-        SecretString = '{"username":"admin","password":"Pa$word1"}'
+        SecretString = '{"username":"admin","password":"Pa$word1"}',
+        Tags = [
+            {
+                'Key': 'AmazonDataZoneDomain',
+                'Value': datazone_domain_id
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Credit Scoring']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Customer Transaction']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Financial Reporting and Analytics']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Fraud Detection and Analysis']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Insurance Policy']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Investment Portfolio']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Loan Application Processing']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Market Data and Insights']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Regulatory Compliance']
+            },
+            {
+                'Key': 'AmazonDataZoneProject',
+                'Value': project_dict['Risk Management']
+            }
+        ]
     )
     
     redshift_login_secret_arn = response['ARN']
@@ -155,3 +201,128 @@ create_environment_redshift('Regulatory Compliance', 'Regulatory Compliance', 'r
 
 # Risk Management - Redshift
 create_environment_redshift('Risk Management', 'Risk Management', 'risk-management')
+
+#
+# 5. Create a data source for each project
+#
+
+def get_enviorment_id(project_name):
+    r = dzc.list_environments(domainIdentifier = datazone_domain_id, projectIdentifier = project_dict[project_name])
+
+    return r['items'][0]['id']
+    
+#
+# Data Lake Data Sources
+#
+
+def create_data_source_glue(data_source_name, project_name, glue_database_name):
+    try:
+        r = dzc.create_data_source(
+            name = data_source_name,
+            domainIdentifier = datazone_domain_id,
+            environmentIdentifier = get_enviorment_id(project_name),
+            projectIdentifier = project_dict[project_name],
+            recommendation = {
+                'enableBusinessNameGeneration': True
+            },
+            type = 'glue',
+            configuration = {
+                'glueRunConfiguration' : {
+                'relationalFilterConfigurations': [
+                    {
+                        'databaseName': glue_database_name,
+                        'filterExpressions': [
+                        {
+                            'expression': '*',
+                            'type': 'INCLUDE'
+                        }
+                        ]
+                    }
+                ]
+                }
+            }
+        )
+        
+        return r['id']
+        
+    except Exception as e:
+        print(e)
+
+data_source_ids = []
+
+# Credit Scoring
+data_source_ids.append(create_data_source_glue('Credit Scoring Glue Data Catalog', 'Credit Scoring', 'credit_scoring'))
+
+# Customer Transaction
+data_source_ids.append(create_data_source_glue('Customer Transaction Glue Data Catalog', 'Customer Transaction', 'customer_transaction'))
+
+# Financial Reporting and Analytics
+data_source_ids.append(create_data_source_glue('Financial Reporting and Analytics Glue Data Catalog', 'Financial Reporting and Analytics', 'financial_reporting_and_analytics'))
+
+# Fraud Detection and Analysis
+data_source_ids.append(create_data_source_glue('Fraud Detection and Analysis Glue Data Catalog', 'Fraud Detection and Analysis', 'fraud_detection_and_analysis'))
+
+# Insurance Policy
+data_source_ids.append(create_data_source_glue('Insurance Policy Glue Data Catalog', 'Insurance Policy', 'insurance_policy'))
+
+#
+# Redshift Data Sources
+#
+
+def create_data_source_redshift(data_source_name, project_name, redshift_serverless_workgroup_name):
+    try:
+        r = dzc.create_data_source(
+            name = data_source_name,
+            domainIdentifier = datazone_domain_id,
+            environmentIdentifier = get_enviorment_id(project_name),
+            projectIdentifier = project_dict[project_name],
+            recommendation = {
+                'enableBusinessNameGeneration': True
+            },
+            type = 'redshift',
+            configuration = {
+                'redshiftRunConfiguration': {
+                    'redshiftCredentialConfiguration': {
+                        'secretManagerArn': redshift_login_secret_arn
+                    },
+                    'redshiftStorage': {
+                        'redshiftServerlessSource': {
+                            'workgroupName': redshift_serverless_workgroup_name
+                    }
+                },
+                
+                'relationalFilterConfigurations': [
+                    {
+                        'databaseName': 'dev',
+                        'filterExpressions': [
+                            {
+                                'expression': '*',
+                                'type': 'INCLUDE'
+                            },
+                        ],
+                        'schemaName': 'public'
+                    },
+                ]
+            }
+            }
+        )
+            
+        return(r['id'])
+            
+    except Exception as e:
+        print(e)
+    
+# Investment Portfolio
+create_data_source_redshift('Investment Portfolio Redshift', 'Investment Portfolio', 'investment-portfolio')
+
+# Loan Application Processing
+create_data_source_redshift('Loan Application Processing Redshift', 'Loan Application Processing', 'loan-application-processing')
+
+# Market Data and Insights
+create_data_source_redshift('Market Data and Insights Redshift', 'Market Data and Insights', 'market-data-insights')
+
+# Regulatory Compliance
+create_data_source_redshift('Regulatory Compliance Redshift', 'Regulatory Compliance', 'regulatory-compliance')
+
+# Risk Management
+create_data_source_redshift('Risk Management Redshift', 'Risk Management', 'risk-management')
