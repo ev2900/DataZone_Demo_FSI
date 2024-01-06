@@ -17,3 +17,6 @@ The demo data sets used are in the [Data_Sets](https://github.com/ev2900/DataZon
 ```python DataZone_Demo_FSI/1_copy_data_sets_to_s3.py```
 
 ```python DataZone_Demo_FSI/2_set_up_glue_data_catalog.py```
+
+```python DataZone_Demo_FSI/3_set_up_redshift.py```
+
