@@ -1,4 +1,4 @@
-import psycopg2 # pip install psycopg2-binary
+import psycopg2
 import boto3
 
 # Define function to run a SQL query on Redshift
