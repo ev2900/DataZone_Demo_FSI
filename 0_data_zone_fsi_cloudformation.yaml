@@ -363,6 +363,30 @@ Resources:
   # Redshift
   #
 
+  # Ivestment Protfolio
+  InvestmentProtfolioRedshiftNamespace:
+    Type: AWS::RedshiftServerless::Namespace
+    Properties:
+      AdminUsername: admin
+      AdminUserPassword: 'Pa$word1'
+      IamRoles: 
+        - !GetAtt RedshiftServerlessIAMRole.Arn
+      NamespaceName: 'investment-portfolio'
+  InvestmentProtfolioRedshiftWorkgroup:
+    Type: AWS::RedshiftServerless::Workgroup
+    Properties:
+      BaseCapacity: 8
+      NamespaceName: 
+        !Ref InvestmentProtfolioRedshiftNamespace
+      SecurityGroupIds: 
+        - !Ref SecurityGroup
+      SubnetIds: 
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+      WorkgroupName: 'investment-portfolio'
+      PubliclyAccessible: True
+
   
 
   #
