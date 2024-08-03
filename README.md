@@ -1,6 +1,6 @@
 # DataZone Demo with Financial Services Specific Data
 
-<img width="275" alt="map-user" src="https://img.shields.io/badge/cloudformation template deployments-75-blue"> <img width="85" alt="map-user" src="https://img.shields.io/badge/views-1784-green"> <img width="125" alt="map-user" src="https://img.shields.io/badge/unique visits-083-green">
+<img width="275" alt="map-user" src="https://img.shields.io/badge/cloudformation template deployments-78-blue"> <img width="85" alt="map-user" src="https://img.shields.io/badge/views-1784-green"> <img width="125" alt="map-user" src="https://img.shields.io/badge/unique visits-083-green">
 
 This repository provides an easy way to deploy and set up an environment for demo'ing Amazon DataZone with data sets specific to the financial services industry.
 
